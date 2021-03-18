@@ -2,8 +2,6 @@ package io.github.metarank.cfor
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import me.dfdx.cfor._
-
 import scala.collection.mutable
 
 class CforTest extends AnyFlatSpec with Matchers {
@@ -133,13 +131,6 @@ class CforTest extends AnyFlatSpec with Matchers {
     cfor(arr) { x =>
       l.append(x)
     }
-    l.toList shouldBe List(0, 1, 2, 3, 4)
-  }
-
-  it should "iterate over array with anonymous function" in {
-    val l   = mutable.ListBuffer[Int]()
-    val arr = Array(0, 1, 2, 3, 4)
-    cfor(arr)(l.append)
     l.toList shouldBe List(0, 1, 2, 3, 4)
   }
 

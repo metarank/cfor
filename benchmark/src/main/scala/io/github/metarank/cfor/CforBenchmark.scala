@@ -4,7 +4,6 @@ import org.openjdk.jmh.annotations._
 
 import java.util.concurrent.TimeUnit
 import scala.util.Random
-import me.dfdx.cfor._
 
 @State(Scope.Benchmark)
 @BenchmarkMode(Array(Mode.AverageTime))
