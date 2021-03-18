@@ -148,4 +148,108 @@ object Syntax {
     new InlineUtil[c.type](c).inlineAndReset[Unit](tree)
   }
 
+  def cforRangeMacro(c: Context)(r: c.Expr[Range])(body: c.Expr[Int => Unit]): c.Expr[Unit] = {
+
+    import c.universe._
+    val util = SyntaxUtil[c.type](c)
+
+    // names always contains 5 entries
+    val names = util.names("range", "index", "end", "limit", "step")
+    val index = names(1)
+    val end   = names(2)
+    val limit = names(3)
+
+    def isLiteral(t: Tree): Option[Int] = t match {
+      case Literal(Constant(a)) =>
+        a match {
+          case n: Int => Some(n)
+          case _      => None
+        }
+      case _ => None
+    }
+
+    def strideUpTo(fromExpr: Tree, toExpr: Tree, stride: Int): Tree =
+      q"""
+      var $index: Int = $fromExpr
+      val $end: Int = $toExpr
+      while ($index <= $end) {
+        $body($index)
+        $index += $stride
+      }"""
+
+    def strideUpUntil(fromExpr: Tree, untilExpr: Tree, stride: Int): Tree =
+      q"""
+      var $index: Int = $fromExpr
+      val $limit: Int = $untilExpr
+      while ($index < $limit) {
+        $body($index)
+        $index += $stride
+      }"""
+
+    def strideDownTo(fromExpr: Tree, toExpr: Tree, stride: Int): Tree =
+      q"""
+      var $index: Int = $fromExpr
+      val $end: Int = $toExpr
+      while ($index >= $end) {
+        $body($index)
+        $index -= $stride
+      }"""
+
+    def strideDownUntil(fromExpr: Tree, untilExpr: Tree, stride: Int): Tree =
+      q"""
+      var $index: Int = $fromExpr
+      val $limit: Int = $untilExpr
+      while ($index > $limit) {
+        $body($index)
+        $index -= $stride
+      }"""
+
+    val tree: Tree = r.tree match {
+
+      case q"$predef.intWrapper($i).until($j)" =>
+        strideUpUntil(i, j, 1)
+
+      case q"$predef.intWrapper($i).to($j)" =>
+        strideUpTo(i, j, 1)
+
+      case r @ q"$predef.intWrapper($i).until($j).by($step)" =>
+        isLiteral(step) match {
+          case Some(k) if k > 0 => strideUpUntil(i, j, k)
+          case Some(k) if k < 0 => strideDownUntil(i, j, -k)
+          case Some(k) =>
+            c.error(c.enclosingPosition, "zero stride")
+            q"()"
+          case None =>
+            c.info(c.enclosingPosition, "non-literal stride", true)
+            q"$r.foreach($body)"
+        }
+
+      case r @ q"$predef.intWrapper($i).to($j).by($step)" =>
+        isLiteral(step) match {
+          case Some(k) if k > 0 => strideUpTo(i, j, k)
+          case Some(k) if k < 0 => strideDownTo(i, j, -k)
+          case Some(k) =>
+            c.error(c.enclosingPosition, "zero stride")
+            q"()"
+          case None =>
+            c.info(c.enclosingPosition, "non-literal stride", true)
+            q"$r.foreach($body)"
+        }
+
+      case r =>
+        c.info(c.enclosingPosition, "non-literal range", true)
+        q"$r.foreach($body)"
+    }
+
+    new InlineUtil[c.type](c).inlineAndReset[Unit](tree)
+  }
+
+  def cforRange2Macro(
+      c: Context
+  )(r1: c.Expr[Range], r2: c.Expr[Range])(body: c.Expr[(Int, Int) => Unit]): c.Expr[Unit] = {
+
+    import c.universe._
+    c.Expr[Unit](q"cforRange($r1)(i => cforRange($r2)(j => $body(i, j)))")
+  }
+
 }

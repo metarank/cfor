@@ -141,4 +141,36 @@ class CforTest extends AnyFlatSpec with Matchers {
     sum shouldBe 10
   }
 
+  it should "cforRange(1 until 4)" in {
+    var t = 0
+    cfor(1 until 4) { x =>
+      t += x
+    }
+    t shouldBe 6
+  }
+
+  it should "cforRange(0 to 10 by 2)" in {
+    var t = 0
+    cfor(0 to 10 by 2) { x =>
+      t += x
+    }
+    t shouldBe 30
+  }
+
+  it should "cforRange(3 to 1 by -1)" in {
+    var t = 0
+    cfor(3 to 1 by -1) { x =>
+      t += x
+    }
+    t shouldBe 6
+  }
+
+  it should "cforRange(0 to 0 by -1)" in {
+    var t = 0
+    cfor(0 to 0 by -1) { x =>
+      t += 1
+    }
+    t shouldBe 1
+  }
+
 }
