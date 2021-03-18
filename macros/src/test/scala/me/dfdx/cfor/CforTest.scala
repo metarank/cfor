@@ -90,7 +90,7 @@ class CforTest extends AnyFlatSpec with Matchers {
       b1 += (() => x)
     }
     val b2 = collection.mutable.ArrayBuffer[() => Int]()
-    var i = 0
+    var i  = 0
     while (i < 3) {
       b2 += (() => i)
       i += 1
@@ -101,17 +101,17 @@ class CforTest extends AnyFlatSpec with Matchers {
   it should "capture value in inner class" in {
     val b = collection.mutable.ArrayBuffer[Int]()
     cfor(0)(_ < 3, _ + 1) { x =>
-    {
-      class A { def f = x }
-      b += (new A().f)
-    }
+      {
+        class A { def f = x }
+        b += (new A().f)
+      }
     }
     b.toList shouldBe List(0, 1, 2)
   }
 
   it should "type tree bug fixed" in {
     val arr = Array((1, 2), (2, 3), (4, 5))
-    var t = 0
+    var t   = 0
     cfor(0)(_ < arr.length, _ + 1) { i =>
       val (a, b) = arr(i)
       t += a + 2 * b
@@ -128,13 +128,26 @@ class CforTest extends AnyFlatSpec with Matchers {
   }
 
   it should "iterate over array" in {
-    val l = mutable.ListBuffer[Int]()
-    val arr = Array(0, 1,2,3,4)
+    val l   = mutable.ListBuffer[Int]()
+    val arr = Array(0, 1, 2, 3, 4)
     cfor(arr) { x =>
       l.append(x)
     }
     l.toList shouldBe List(0, 1, 2, 3, 4)
+  }
 
+  it should "iterate over array with anonymous function" in {
+    val l   = mutable.ListBuffer[Int]()
+    val arr = Array(0, 1, 2, 3, 4)
+    cfor(arr)(l.append)
+    l.toList shouldBe List(0, 1, 2, 3, 4)
+  }
+
+  it should "sum over array with anonymous function" in {
+    var sum = 0
+    val arr = Array(0, 1, 2, 3, 4)
+    cfor(arr)(sum += _)
+    sum shouldBe 10
   }
 
 }

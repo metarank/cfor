@@ -13,7 +13,7 @@ import me.dfdx.cfor._
 @Measurement(iterations = 10, time = 1)
 @Fork(value = 1)
 class CforBenchmark {
-  @Param(Array("10", "1000", "1000000"))
+  @Param(Array("1000"))
   var length: Int = _
 
   var array: Array[Int] = _
@@ -29,27 +29,43 @@ class CforBenchmark {
   }
 
   @Benchmark
-  def measureArraySum() = {
-    var sum = 0
-    var i   = 0
-    while (i < array.length) {
-      sum += array(i)
-      i += 1
-    }
-    sum
-  }
-
-  @Benchmark
-  def measureCforIndexSum() = {
+  def cforSum() = {
     var sum = 0
     cfor(0)(_ < array.length, _ + 1) { i => sum += array(i) }
     sum
   }
 
   @Benchmark
-  def measureCforArraySum() = {
+  def cforForeachSum() = {
     var sum = 0
-    cfor(array) { i => sum += i }
+    cfor(array) { sum += _ }
+    sum
+  }
+
+  @Benchmark
+  def scalaCollectionsSum() = {
+    array.sum
+  }
+
+  @Benchmark
+  def scalaForeachSum() = {
+    var sum = 0
+    for {
+      value <- array
+    } {
+      sum += value
+    }
+    sum
+  }
+
+  @Benchmark
+  def scalaWhileSum() = {
+    var sum = 0
+    var i   = 0
+    while (i < array.length) {
+      sum += array(i)
+      i += 1
+    }
     sum
   }
 }
