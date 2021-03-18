@@ -1,5 +1,9 @@
 # cfor: java-style for and foreach loop in scala
 
+[![CI Status](https://github.com/metarank/cfor/workflows/CI/badge.svg)](https://github.com/metarank/cfor/actions)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.metarank/cfor/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.github.metarank/cfor)
+[![License: Apache 2](https://img.shields.io/badge/License-Apache2-green.svg)](https://opensource.org/licenses/Apache-2.0)
+
 This tiny project is a cfor macro inspired by the one 
 originally implemented in [Typelevel spire](https://github.com/typelevel/spire/blob/master/macros/src/main/scala/spire/macros/Syntax.scala) 
 library. Supports Scala 2.12 and 2.13, has zero dependencies and does not require spire.
@@ -8,7 +12,7 @@ library. Supports Scala 2.12 and 2.13, has zero dependencies and does not requir
 
 An index loop:
 ```scala
-import me.dfdx.cfor._
+import io.github.metarank.cfor._
 def sum(values: Array[Int]) = {
   var result = 0
   cfor(0)(_ < values.length, _ + 1) { i => result += values(i) }
@@ -18,7 +22,7 @@ def sum(values: Array[Int]) = {
 
 A foreach loop:
 ```scala
-import me.dfdx.cfor._
+import io.github.metarank.cfor._
 def sum(values: Array[Int]) = {
   var result = 0
   cfor(values) { result += _ }
@@ -28,6 +32,13 @@ def sum(values: Array[Int]) = {
 
 Both of this `cfor` calls are expanded into a while loop with no boxing, no extra allocations and 
 with the same performance as a pure java for loop.
+
+## Installation
+
+Available on maven central for scala 2.12 and 2.13
+```scala
+libraryDependencies += "io.github.metarank" %% "cfor" % "0.1"
+```
 
 ## Purpose
 
