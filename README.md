@@ -123,18 +123,18 @@ It has zero extra allocations and exactly the same performance as a while/for lo
 
 The [benchmark](notfound) is done on Scala 2.13.5, AdoptOpenJDK 11.0.10 x64. 
 ```
-[info] Benchmark                                         (length)  Mode  Cnt      Score     Error   Units
-[info] cforForeachSum                                        1000  avgt   30    246.620 ±   0.836   ns/op
-[info] cforSum                                               1000  avgt   30    248.275 ±   1.001   ns/op
-[info] scalaCollectionsSum                                   1000  avgt   30   5058.811 ± 139.946   ns/op
-[info] scalaForeachSum                                       1000  avgt   30   1769.533 ±  42.385   ns/op
-[info] scalaWhileSum                                         1000  avgt   30    247.857 ±   0.358   ns/op
+[info] Benchmark                                 (length)  Mode  Cnt      Score     Error   Units
+[info] cforForeachSum                                1000  avgt   30    246.620 ±   0.836   ns/op
+[info] cforSum                                       1000  avgt   30    248.275 ±   1.001   ns/op
+[info] scalaCollectionsSum                           1000  avgt   30   5058.811 ± 139.946   ns/op
+[info] scalaForeachSum                               1000  avgt   30   1769.533 ±  42.385   ns/op
+[info] scalaWhileSum                                 1000  avgt   30    247.857 ±   0.358   ns/op
 
-[info] cforForeachSum:·gc.alloc.rate.norm                    1000  avgt   30     ≈ 10⁻³              B/op
-[info] cforSum:·gc.alloc.rate.norm                           1000  avgt   30     ≈ 10⁻³              B/op
-[info] scalaCollectionsSum:·gc.alloc.rate.norm               1000  avgt   30  11813.341 ±  35.878    B/op
-[info] scalaForeachSum:·gc.alloc.rate.norm                   1000  avgt   30     32.003 ±   0.004    B/op
-[info] scalaWhileSum:·gc.alloc.rate.norm                     1000  avgt   30     ≈ 10⁻³              B/op
+[info] cforForeachSum:·gc.alloc.rate.norm            1000  avgt   30     ≈ 10⁻³              B/op
+[info] cforSum:·gc.alloc.rate.norm                   1000  avgt   30     ≈ 10⁻³              B/op
+[info] scalaCollectionsSum:·gc.alloc.rate.norm       1000  avgt   30  11813.341 ±  35.878    B/op
+[info] scalaForeachSum:·gc.alloc.rate.norm           1000  avgt   30     32.003 ±   0.004    B/op
+[info] scalaWhileSum:·gc.alloc.rate.norm             1000  avgt   30     ≈ 10⁻³              B/op
 ```
 
 ## License
