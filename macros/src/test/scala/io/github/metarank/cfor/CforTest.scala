@@ -1,4 +1,4 @@
-package me.dfdx.cfor
+package io.github.metarank.cfor
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers

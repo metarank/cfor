@@ -1,10 +1,8 @@
 name := "cfor"
 
-publishTo := sonatypePublishToBundle.value
-
-sonatypeProfileName := "me.dfdx"
-
 publishMavenStyle := true
+
+publishTo := sonatypePublishToBundle.value
 
 licenses := Seq("APL2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 

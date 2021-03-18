@@ -3,10 +3,12 @@ name := "cfor"
 scalaVersion := "2.13.5"
 version := "0.1"
 
+sonatypeProfileName := "io.github.metarank"
+
 lazy val sharedSettings = Seq(
   crossScalaVersions := Seq("2.12.12", "2.13.5"),
   version := "0.1",
-  organization := "me.dfdx",
+  organization := "io.github.metarank",
   scalaVersion := "2.13.5",
   scalacOptions ++= Seq("-feature", "-deprecation"),
   libraryDependencies ++= Seq(

@@ -1,4 +1,4 @@
-package me.dfdx.cfor
+package io.github.metarank.cfor
 
 import Syntax._
 
