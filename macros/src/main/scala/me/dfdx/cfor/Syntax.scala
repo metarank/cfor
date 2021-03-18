@@ -9,7 +9,6 @@ case class SyntaxUtil[C <: Context with Singleton](val c: C) {
   def freshTermName[C <: Context](c: C)(s: String) =
     c.universe.TermName(c.freshName(s))
 
-
   def name(s: String) = freshTermName(c)(s + "$")
 
   def names(bs: String*) = bs.toList.map(name)
@@ -18,8 +17,8 @@ case class SyntaxUtil[C <: Context with Singleton](val c: C) {
     es.forall {
       _.tree match {
         case t @ Ident(_: TermName) if t.symbol.asTerm.isStable => true
-        case Function(_, _) => true
-        case _ => false
+        case Function(_, _)                                     => true
+        case _                                                  => false
       }
     }
 }
@@ -48,8 +47,7 @@ class InlineUtil[C <: Context with Singleton](val c: C) {
         case tree: Ident if tree.symbol == symbol =>
           if (tree.name == name) {
             value
-          }
-          else {
+          } else {
             super.transform(tree)
           }
 
@@ -88,13 +86,12 @@ class InlineUtil[C <: Context with Singleton](val c: C) {
 object Syntax {
   type Context = scala.reflect.macros.whitebox.Context
 
-
   def cforArrayMacro[A](c: Context)(array: c.Expr[Array[A]])(body: c.Expr[A => Unit]): c.Expr[Unit] = {
     import c.universe._
-    val util = SyntaxUtil[c.type](c)
+    val util  = SyntaxUtil[c.type](c)
     val index = util.name("index")
 
-    val tree =
+    val tree = if (util.isClean(body)) {
       q"""
       var $index: Int = 0
       while ($index < $array.length) {
@@ -102,16 +99,26 @@ object Syntax {
         $index += 1
       }
       """
-
+    } else {
+      val bodyName = util.name("body")
+      q"""
+      val $bodyName: Int => Unit = $body
+      var $index: Int = 0
+      while ($index < $array.length) {
+        $bodyName($array($index))
+        $index += 1
+      }
+      """
+    }
     new InlineUtil[c.type](c).inlineAndReset[Unit](tree)
   }
 
   def cforMacro[A](
-                    c: Context
-                  )(init: c.Expr[A])(test: c.Expr[A => Boolean], next: c.Expr[A => A])(body: c.Expr[A => Unit]): c.Expr[Unit] = {
+      c: Context
+  )(init: c.Expr[A])(test: c.Expr[A => Boolean], next: c.Expr[A => A])(body: c.Expr[A => Unit]): c.Expr[Unit] = {
 
     import c.universe._
-    val util = SyntaxUtil[c.type](c)
+    val util  = SyntaxUtil[c.type](c)
     val index = util.name("index")
 
     val tree = if (util.isClean(test, next, body)) {

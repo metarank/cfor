@@ -12,10 +12,10 @@ lazy val sharedSettings = Seq(
   scalacOptions ++= Seq("-feature", "-deprecation"),
   libraryDependencies ++= Seq(
     "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-    "org.scalatest" %% "scalatest" % "3.2.6" % "test"
+    "org.scalatest" %% "scalatest"     % "3.2.6" % "test"
   )
 )
 
 lazy val macros = (project in file("macros")).settings(sharedSettings)
 
-lazy val benchmark = (project in file("benchmark")).settings(sharedSettings)
+lazy val benchmark = (project in file("benchmark")).settings(sharedSettings).dependsOn(macros)
