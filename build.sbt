@@ -1,12 +1,11 @@
 name := "cfor"
 
+scalaVersion := "2.13.5"
 version := "0.1"
 
-scalaVersion := "2.13.5"
-
-crossScalaVersions := Seq("2.12.12", "2.13.5")
-
 lazy val sharedSettings = Seq(
+  crossScalaVersions := Seq("2.12.12", "2.13.5"),
+  version := "0.1",
   organization := "me.dfdx",
   scalaVersion := "2.13.5",
   scalacOptions ++= Seq("-feature", "-deprecation"),
