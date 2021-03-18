@@ -1,0 +1,11 @@
+.idea
+project/project
+project/target
+target
+.DS_STORE
+.git
+macros/project
+macros/target
+benchmark/project
+benchmark/target
+.bsp
