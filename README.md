@@ -1,7 +1,7 @@
 # cfor: java-style for and foreach loop in scala
 
 [![CI Status](https://github.com/metarank/cfor/workflows/CI/badge.svg)](https://github.com/metarank/cfor/actions)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.metarank/cfor/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.github.metarank/cfor)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.metarank/cfor_2.13/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.github.metarank/cfor_2.13)
 [![License: Apache 2](https://img.shields.io/badge/License-Apache2-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
 This tiny project is a cfor macro inspired by the one 
