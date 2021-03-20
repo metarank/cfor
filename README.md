@@ -1,4 +1,4 @@
-# cfor: java-style for and foreach loop in scala
+# cfor: fast java-style for and foreach loop in scala
 
 [![CI Status](https://github.com/metarank/cfor/workflows/CI/badge.svg)](https://github.com/metarank/cfor/actions)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.metarank/cfor_2.13/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.github.metarank/cfor_2.13)
