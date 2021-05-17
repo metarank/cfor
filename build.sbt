@@ -2,16 +2,16 @@ name := "cfor"
 
 val cforVersion = "0.2"
 
-scalaVersion := "2.13.5"
+scalaVersion := "2.13.6"
 version := cforVersion
 
 sonatypeProfileName := "io.github.metarank"
 
 lazy val sharedSettings = Seq(
-  crossScalaVersions := Seq("2.12.13", "2.13.5"),
+  crossScalaVersions := Seq("2.12.13", "2.13.6"),
   organization := "io.github.metarank",
   version := cforVersion,
-  scalaVersion := "2.13.5",
+  scalaVersion := "2.13.6",
   scalacOptions ++= Seq("-feature", "-deprecation"),
   libraryDependencies ++= Seq(
     "org.scala-lang" % "scala-reflect" % scalaVersion.value,
