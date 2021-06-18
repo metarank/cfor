@@ -8,7 +8,7 @@ version := cforVersion
 sonatypeProfileName := "io.github.metarank"
 
 lazy val sharedSettings = Seq(
-  crossScalaVersions := Seq("2.12.13", "2.13.6"),
+  crossScalaVersions := Seq("2.12.14", "2.13.6"),
   organization := "io.github.metarank",
   version := cforVersion,
   scalaVersion := "2.13.6",
