@@ -15,7 +15,7 @@ lazy val sharedSettings = Seq(
   scalacOptions ++= Seq("-feature", "-deprecation"),
   libraryDependencies ++= Seq(
     "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-    "org.scalatest" %% "scalatest"     % "3.2.10" % "test"
+    "org.scalatest" %% "scalatest"     % "3.2.12" % "test"
   )
 )
 
