@@ -1,44 +1,30 @@
 package io.github.metarank.cfor
 
-import scala.PartialFunction.cond
+import scala.collection.immutable.NumericRange
 
-//inline def cfor[A](inline init: A)(inline test: A => Boolean, inline next: A => A)(inline body: A => Any): Unit =
-//  var a = init
-//  while test(a) do
-//    body(a)
-//    a = next(a)
+type RangeLike = Range | NumericRange[Long]
+
+type RangeElem[X <: RangeLike] = X match
+  case Range => Int
+  case NumericRange[Long] => Long
 
 inline def cfor[A](inline init: A)(inline test: A => Boolean, inline next: A => A)(inline body: A => Unit): Unit =
   ${ cforImpl('init, 'test, 'next, 'body) }
 
-inline def cfor[A](inline array: Array[A])(inline body: A => Unit): Unit =
-  var i = 0
-  while i < array.length do
-    body(array(i))
-    i += 1
+inline def cfor[A](inline array: Array[A])(body: A => Unit): Unit =
+  cfor(0)(_ < array.length, _ + 1)(i => body(array(i)))
 
-inline def cfor(inline r: Range)(inline body: Int => Unit): Unit =
-  val end = r match
-    case _: Range.Inclusive => if r.step > 0 then r.end + 1 else r.end - 1
-    case _: Range.Exclusive => r.end
-
-  var i = r.start
-  if r.step > 0 then
-    while i < end do
-      body(i)
-      i += r.step
-  else
-    while i > end do
-      body(i)
-      i += r.step
+inline def cfor[R <: RangeLike](inline r: R)(inline body: RangeElem[R] => Unit): Unit =
+  ${ cforRangeMacroGen('r, 'body) }
 
 
 //--------------------------------------------------------------------------
 //
-// Code from below are fragments of file
+// Code from below are based on file
 // `core/src/main/scala-3/spire/syntax/macros/cforMacros.scala`
+// From project Spire (https://github.com/typelevel/spire)
+//
 // Original copyright and license noted
-// OUt out 133 lines 37 are uised here.
 //
 
 /*
@@ -55,9 +41,12 @@ inline def cfor(inline r: Range)(inline body: Int => Unit): Unit =
  * *                                                                      **
  * \***********************************************************************
  */
+
+import scala.PartialFunction.cond
 import scala.quoted.*
-def cforImpl[R: Type](init: Expr[R], test: Expr[R => Boolean], next: Expr[R => R], body: Expr[R => Unit])(using
-                                                                                                          Quotes
+
+private def cforImpl[R: Type](init: Expr[R], test: Expr[R => Boolean], next: Expr[R => R], body: Expr[R => Unit])(using
+  Quotes
 ): Expr[Unit] =
   import quotes.reflect.*
 
@@ -70,6 +59,86 @@ def cforImpl[R: Type](init: Expr[R], test: Expr[R => Boolean], next: Expr[R => R
 
   letFunc("test", test)(t => letFunc("next", next)(n => letFunc("body", body)(b => code(t, n, b))))
 end cforImpl
+
+private def cforRangeMacroGen[R <: RangeLike: Type](r: Expr[R], body: Expr[RangeElem[R] => Unit])(using
+  quotes: Quotes
+): Expr[Unit] =
+  import quotes.reflect.*
+
+  r match
+    case '{ $r: Range }              => RangeForImpl.ofInt(r, body.asExprOf[Int => Unit])
+    case '{ $r: NumericRange[Long] } => RangeForImpl.ofLong(r, body.asExprOf[Long => Unit])
+    case '{ $r }                     => report.error(s"Ineligible Range type ", r); '{}
+
+end cforRangeMacroGen
+
+private object RangeForImpl:
+  type Code[T] = Expr[T => Unit] => Expr[Unit]
+  type Test[T] = (Expr[T], Expr[T]) => Expr[Boolean]
+
+  def ofInt(r: Expr[Range], body: Expr[Int => Unit])(using Quotes): Expr[Unit] =
+    val code: Code[Int] = r match
+      case '{ ($i: Int) to $j }                              => loopCode(i, j, 1, (x, y) => '{ $x <= $y })
+      case '{ ($i: Int) to $j by ${ Expr(k) } } if k > 0     => loopCode(i, j, k, (x, y) => '{ $x <= $y })
+      case '{ ($i: Int) to $j by ${ Expr(k) } } if k < 0     => loopCode(i, j, k, (x, y) => '{ $x >= $y })
+      case '{ ($i: Int) to $j by ${ Expr(k) } } if k == 0    => zeroStride(r)
+      case '{ ($i: Int) until $j }                           => loopCode(i, j, 1, (x, y) => '{ $x < $y })
+      case '{ ($i: Int) until $j by ${ Expr(k) } } if k > 0  => loopCode(i, j, k, (x, y) => '{ $x < $y })
+      case '{ ($i: Int) until $j by ${ Expr(k) } } if k < 0  => loopCode(i, j, k, (x, y) => '{ $x > $y })
+      case '{ ($i: Int) until $j by ${ Expr(k) } } if k == 0 => zeroStride(r)
+      case _                                                 => deOpt(r, '{ $r.foreach($body) })
+
+    letFunc("body", body)(code)
+  end ofInt
+
+  def ofLong(r: Expr[NumericRange[Long]], body: Expr[Long => Unit])(using quotes: Quotes): Expr[Unit] =
+    val code: Code[Long] = r match
+      case '{ ($i: Long) to $j }                              => loopCode(i, j, 1L, (x, y) => '{ $x <= $y })
+      case '{ ($i: Long) to $j by ${ Expr(k) } } if k > 0     => loopCode(i, j, k, (x, y) => '{ $x <= $y })
+      case '{ ($i: Long) to $j by ${ Expr(k) } } if k < 0     => loopCode(i, j, k, (x, y) => '{ $x >= $y })
+      case '{ ($i: Long) to $j by ${ Expr(k) } } if k == 0    => zeroStride(r)
+      case '{ ($i: Long) until $j }                           => loopCode(i, j, 1L, (x, y) => '{ $x < $y })
+      case '{ ($i: Long) until $j by ${ Expr(k) } } if k > 0  => loopCode(i, j, k, (x, y) => '{ $x < $y })
+      case '{ ($i: Long) until $j by ${ Expr(k) } } if k < 0  => loopCode(i, j, k, (x, y) => '{ $x > $y })
+      case '{ ($i: Long) until $j by ${ Expr(k) } } if k == 0 => zeroStride(r)
+      case _                                                  => deOpt(r, '{ $r.foreach($body) })
+
+    letFunc("body", body)(code)
+
+  end ofLong
+
+  def loopCode[T: Type: ToExpr: CanLoop](i: Expr[T], j: Expr[T], s: T, test: Test[T])(using Quotes): Code[T] =
+    body =>
+      '{
+        var index = $i
+        val limit = $j
+        while ${ test('index, 'limit) } do
+          $body(index)
+          index = ${ 'index.stepBy(Expr(s)) }
+      }
+
+  def zeroStride[T, R](orig: Expr[R])(using Quotes): Code[T] = _ =>
+    import quotes.reflect.*
+    report.error("zero stride", orig)
+    '{}
+
+  def deOpt[T, R](orig: Expr[R], foreach: Expr[Unit])(using Quotes): Code[T] = _ =>
+    import quotes.reflect.*
+    report.warning(s"defaulting to foreach, can not optimise range expression", orig)
+    foreach
+
+  trait CanLoop[T]:
+    extension (x: Expr[T]) def stepBy(y: Expr[T])(using Quotes): Expr[T]
+
+  object CanLoop:
+    given CanLoop[Int] with
+      extension (x: Expr[Int]) def stepBy(y: Expr[Int])(using Quotes): Expr[Int] = '{ $x + $y }
+
+    given CanLoop[Long] with
+      extension (x: Expr[Long]) def stepBy(y: Expr[Long])(using Quotes): Expr[Long] = '{ $x + $y }
+
+end RangeForImpl
+
 
 /**
  * Equivalent to `'{ val name: A => B = $rhs; ${in('name)} }`, except when `rhs` is a function literal, then equivalent
@@ -88,7 +157,7 @@ private def letFunc[A, B, C](using Quotes)(name: String, rhs: Expr[A => B])(in: 
   }
 
   def let[A, B](name: String, rhs: Expr[A])(in: Expr[A] => Expr[B])(using Quotes): Expr[B] =
-  // Equivalent to `'{ val name = $rhs; ${in('name)} }`
+    // Equivalent to `'{ val name = $rhs; ${in('name)} }`
     ValDef.let(Symbol.spliceOwner, name, rhs.asTerm)(ref => in(ref.unsafeAsExpr[A]).asTerm).unsafeAsExpr[B]
 
   if isFunctionLiteral(rhs) then in(Expr.betaReduce(rhs))
