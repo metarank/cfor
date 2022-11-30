@@ -2,6 +2,7 @@ package io.github.metarank.cfor
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+
 import scala.collection.mutable
 
 class CforTest extends AnyFlatSpec with Matchers {
@@ -141,6 +142,20 @@ class CforTest extends AnyFlatSpec with Matchers {
     sum shouldBe 10
   }
 
+  it should "functions with side effects in cfor(arr)" in {
+    var sum = 0
+    var v = 0
+    val arr = Array(0, 1, 2, 3, 4)
+    cfor(arr) {
+      v += 100
+      x => {
+        sum += x
+      }
+    }
+    sum shouldBe 10
+    v shouldBe 100
+  }
+
   it should "cforRange(1 until 4)" in {
     var t = 0
     cfor(1 until 4) { x =>
@@ -173,4 +188,16 @@ class CforTest extends AnyFlatSpec with Matchers {
     t shouldBe 1
   }
 
+//  it should "functions with side effects in cfor(range)" in {
+//    var t = 0
+//    var v = 0
+//    cfor(1 until 4) {
+//      v += 100
+//      x => {
+//        t += x
+//      }
+//    }
+//    t shouldBe 6
+//    v shouldBe 100
+//  }
 }
