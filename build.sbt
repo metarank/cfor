@@ -14,7 +14,7 @@ def isScala2(scalaVersion: String): Boolean =
   }
 
 lazy val sharedSettings = Seq(
-  crossScalaVersions := Seq("2.12.16", "2.13.10", "3.2.1"),
+  crossScalaVersions := Seq("2.12.16", "2.13.10", "3.2.2"),
   organization       := "io.github.metarank",
   version            := cforVersion,
   scalaVersion       := "2.13.10",
