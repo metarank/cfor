@@ -5,7 +5,7 @@ import scala.collection.immutable.NumericRange
 type RangeLike = Range | NumericRange[Long]
 
 type RangeElem[X <: RangeLike] = X match
-  case Range => Int
+  case Range              => Int
   case NumericRange[Long] => Long
 
 inline def cfor[A](inline init: A)(inline test: A => Boolean, inline next: A => A)(inline body: A => Unit): Unit =
@@ -16,7 +16,6 @@ inline def cfor[A](inline array: Array[A])(body: A => Unit): Unit =
 
 inline def cfor[R <: RangeLike](inline r: R)(inline body: RangeElem[R] => Unit): Unit =
   ${ cforRangeMacroGen('r, 'body) }
-
 
 //--------------------------------------------------------------------------
 //
@@ -46,7 +45,7 @@ import scala.PartialFunction.cond
 import scala.quoted.*
 
 private def cforImpl[R: Type](init: Expr[R], test: Expr[R => Boolean], next: Expr[R => R], body: Expr[R => Unit])(using
-  Quotes
+    Quotes
 ): Expr[Unit] =
   import quotes.reflect.*
 
@@ -61,7 +60,7 @@ private def cforImpl[R: Type](init: Expr[R], test: Expr[R => Boolean], next: Exp
 end cforImpl
 
 private def cforRangeMacroGen[R <: RangeLike: Type](r: Expr[R], body: Expr[RangeElem[R] => Unit])(using
-  quotes: Quotes
+    quotes: Quotes
 ): Expr[Unit] =
   import quotes.reflect.*
 
@@ -139,14 +138,12 @@ private object RangeForImpl:
 
 end RangeForImpl
 
-
-/**
- * Equivalent to `'{ val name: A => B = $rhs; ${in('name)} }`, except when `rhs` is a function literal, then equivalent
- * to `in(rhs)`.
- *
- * This allows inlined function arguments to perform side-effects only once before their first evaluation, while still
- * avoiding the creation of closures for function literal arguments.
- */
+/** Equivalent to `'{ val name: A => B = $rhs; ${in('name)} }`, except when `rhs` is a function literal, then equivalent
+  * to `in(rhs)`.
+  *
+  * This allows inlined function arguments to perform side-effects only once before their first evaluation, while still
+  * avoiding the creation of closures for function literal arguments.
+  */
 private def letFunc[A, B, C](using Quotes)(name: String, rhs: Expr[A => B])(in: Expr[A => B] => Expr[C]): Expr[C] =
   import quotes.reflect.*
 
