@@ -49,10 +49,10 @@ class CforTest extends AnyFlatSpec with Matchers {
   }
 
   it should "functions with side effects function values in cfor" in {
-    val b = mutable.ArrayBuffer.empty[Int]
-    var v = 0
+    val b                    = mutable.ArrayBuffer.empty[Int]
+    var v                    = 0
     def test: Int => Boolean = { v += 1; _ < 3 }
-    def incr: Int => Int = { v += 10; _ + 1 }
+    def incr: Int => Int     = { v += 10; _ + 1 }
     def body: Int => Unit = {
       v += 100
       x => {
@@ -144,7 +144,7 @@ class CforTest extends AnyFlatSpec with Matchers {
 
   it should "functions with side effects in cfor(arr)" in {
     var sum = 0
-    var v = 0
+    var v   = 0
     val arr = Array(0, 1, 2, 3, 4)
     cfor(arr) {
       v += 100
