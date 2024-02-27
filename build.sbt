@@ -2,7 +2,7 @@ name := "cfor"
 
 val cforVersion = "0.3"
 
-scalaVersion := "2.13.10"
+scalaVersion := "2.13.13"
 version      := cforVersion
 
 sonatypeProfileName := "io.github.metarank"
@@ -14,10 +14,10 @@ def isScala2(scalaVersion: String): Boolean =
   }
 
 lazy val sharedSettings = Seq(
-  crossScalaVersions := Seq("2.12.16", "2.13.10", "3.2.1"),
+  crossScalaVersions := Seq("2.12.16", "2.13.13", "3.2.1"),
   organization       := "io.github.metarank",
   version            := cforVersion,
-  scalaVersion       := "2.13.10",
+  scalaVersion       := "2.13.13",
   scalacOptions ++= Seq("-feature", "-deprecation"),
   libraryDependencies ++= (if (isScala2(scalaVersion.value)) {
                              Seq("org.scala-lang" % "scala-reflect" % scalaVersion.value)
