@@ -52,7 +52,7 @@ class InlineUtil[C <: Context with Singleton](val c: C) {
           }
 
         case tt: TypeTree if tt.original != null =>
-          //super.transform(TypeTree().setOriginal(transform(tt.original)))
+          // super.transform(TypeTree().setOriginal(transform(tt.original)))
           super.transform(setOrig(c)(TypeTree(), transform(tt.original)))
         case _ =>
           super.transform(tree)
@@ -216,7 +216,7 @@ object Syntax {
         isLiteral(step) match {
           case Some(k) if k > 0 => strideUpUntil(i, j, k)
           case Some(k) if k < 0 => strideDownUntil(i, j, -k)
-          case Some(k) =>
+          case Some(k)          =>
             c.error(c.enclosingPosition, "zero stride")
             q"()"
           case None =>
@@ -228,7 +228,7 @@ object Syntax {
         isLiteral(step) match {
           case Some(k) if k > 0 => strideUpTo(i, j, k)
           case Some(k) if k < 0 => strideDownTo(i, j, -k)
-          case Some(k) =>
+          case Some(k)          =>
             c.error(c.enclosingPosition, "zero stride")
             q"()"
           case None =>
