@@ -48,7 +48,7 @@ with the same performance as a pure java for loop.
 
 Available on maven central for scala 2.13 and 3
 ```scala
-libraryDependencies += "io.github.metarank" %% "cfor" % "0.3"
+libraryDependencies += "io.github.metarank" %% "cfor" % "0.4"
 ```
 
 ## Purpose

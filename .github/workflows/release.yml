@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - '[0-9]+.[0-9]+.[0-9]+*' # 0.4.0, 0.4.0-M1, 0.4.0-RC1 — no v prefix
+      - '[0-9]+.[0-9]+*' # 0.4.0, 0.4.0-M1, 0.4.0-RC1 — no v prefix
 
 permissions:
   contents: write # create release + upload assets
