@@ -148,6 +148,20 @@ The [benchmark](notfound) is done on Scala 2.13.5, AdoptOpenJDK 11.0.10 x64.
 [info] scalaWhileSum:·gc.alloc.rate.norm             1000  avgt   30     ≈ 10⁻³              B/op
 ```
 
+## Releasing
+
+The version is derived from the git tag by sbt-dynver. Pushing a tag publishes signed jars to Maven Central
+and creates a GitHub release:
+```bash
+git tag 0.4.0 && git push origin 0.4.0
+```
+
+The release workflow expects these repository secrets:
+
+* `SONATYPE_USERNAME` / `SONATYPE_PASSWORD`: a [Central Portal](https://central.sonatype.com) user token
+* `PGP_SECRET`: armored private key (`gpg --armor --export-secret-keys <KEYID>`), public key uploaded to a keyserver
+* `PGP_PASSPHRASE`: passphrase of that key
+
 ## License
 
 This project is released under the Apache 2.0 license, as specified in the LICENSE file.
