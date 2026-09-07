@@ -1,11 +1,4 @@
-name := "cfor"
-
 val cforVersion = "0.3"
-
-scalaVersion := "2.13.10"
-version      := cforVersion
-
-sonatypeProfileName := "io.github.metarank"
 
 def isScala2(scalaVersion: String): Boolean =
   CrossVersion.partialVersion(scalaVersion) match {
@@ -14,10 +7,10 @@ def isScala2(scalaVersion: String): Boolean =
   }
 
 lazy val sharedSettings = Seq(
-  crossScalaVersions := Seq("2.12.16", "2.13.10", "3.2.1"),
+  crossScalaVersions := Seq("2.13.18", "3.9.0"),
   organization       := "io.github.metarank",
   version            := cforVersion,
-  scalaVersion       := "2.13.10",
+  scalaVersion       := "2.13.18",
   scalacOptions ++= Seq("-feature", "-deprecation"),
   libraryDependencies ++= (if (isScala2(scalaVersion.value)) {
                              Seq("org.scala-lang" % "scala-reflect" % scalaVersion.value)
@@ -25,10 +18,18 @@ lazy val sharedSettings = Seq(
                              Seq.empty[ModuleID]
                            }),
   libraryDependencies ++= Seq(
-    "org.scalatest" %% "scalatest" % "3.2.14" % "test"
+    "org.scalatest" %% "scalatest" % "3.2.20" % "test"
   )
 )
 
+lazy val root = (project in file("."))
+  .settings(sharedSettings)
+  .settings(name := "cfor-root", publish / skip := true)
+  .aggregate(macros, benchmark)
+
 lazy val macros = (project in file("macros")).settings(sharedSettings)
 
-lazy val benchmark = (project in file("benchmark")).settings(sharedSettings).dependsOn(macros)
+lazy val benchmark = (project in file("benchmark"))
+  .settings(sharedSettings)
+  .settings(name := "cfor-benchmark", publish / skip := true)
+  .dependsOn(macros)
