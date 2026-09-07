@@ -40,13 +40,13 @@ jobs:
           PGP_SECRET: ${{ secrets.PGP_SECRET }}
 
       - name: Verify version is derived from the tag
-        run: sbt -mem 3000 assertTagVersion
+        run: sbt --server -mem 3000 assertTagVersion
 
       - name: Run tests
-        run: sbt -mem 3000 "+test"
+        run: sbt --server -mem 3000 "+test"
 
       - name: Publish to Maven Central
-        run: sbt -mem 3000 "+macros/publishSigned" sonaRelease
+        run: sbt --server -mem 3000 "+macros/publishSigned" sonaRelease
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
