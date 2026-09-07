@@ -1,6 +1,3 @@
-# This workflow will build a Java project with Maven
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
-
 name: CI
 
 on:
@@ -11,30 +8,34 @@ on:
 
 jobs:
   build:
+    timeout-minutes: 20
     runs-on: ${{ matrix.platform }}
     strategy:
       matrix:
         java: [11, 17]
-        platform: [ubuntu-22.04]
+        platform: [ubuntu-24.04]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v7
       with:
         lfs: true
-    - name: Set up JDK
-      uses: actions/setup-java@v1
+
+    - uses: actions/cache@v6
       with:
+        path: |
+          ~/.sbt
+          ~/.m2
+          ~/.ivy2
+          ~/.cache
+        key: ${{ runner.os }}-build-${{ hashFiles('build.sbt', 'project/**') }}
+
+    - name: Set up JDK
+      uses: actions/setup-java@v6
+      with:
+        distribution: 'temurin'
         java-version: ${{ matrix.java }}
 
-    - name: Cache maven packages
-      uses: actions/cache@v2
-      env:
-        cache-name: cache-sbt
-      with:
-        path: ~/.m2 ~/.coursier ~/.cache/coursier ~/.ivy2 ~/.sbt
-        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-build-${{ env.cache-name }}-
-          ${{ runner.os }}-build-
-          ${{ runner.os }}-
+    - name: Set up sbt
+      uses: sbt/setup-sbt@v1
+
     - name: Run tests
-      run: sbt "+test"
+      run: sbt -mem 3000 "+test"
