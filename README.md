@@ -6,7 +6,7 @@
 
 This tiny project is a cfor macro inspired by the one 
 originally implemented in [Typelevel spire](https://github.com/typelevel/spire/blob/master/macros/src/main/scala/spire/macros/Syntax.scala) 
-library. Supports Scala 2.12 and 2.13 and has zero dependencies.
+library. Supports Scala 2.13 and 3 and has zero dependencies.
 
 ## Example
 
@@ -46,9 +46,9 @@ with the same performance as a pure java for loop.
 
 ## Installation
 
-Available on maven central for scala 2.12 and 2.13
+Available on maven central for scala 2.13 and 3
 ```scala
-libraryDependencies += "io.github.metarank" %% "cfor" % "0.2"
+libraryDependencies += "io.github.metarank" %% "cfor" % "0.3"
 ```
 
 ## Purpose
