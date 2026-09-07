@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+*' # 0.4.0, 0.4.0-M1, 0.4.0-RC1 — no v prefix
+
+permissions:
+  contents: write # create release + upload assets
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # sbt-dynver derives the version from `git describe`, which needs tags + history
+          fetch-depth: 0
+          fetch-tags: true
+
+      - uses: actions/cache@v6
+        with:
+          path: |
+            ~/.sbt
+            ~/.m2
+            ~/.ivy2
+            ~/.cache
+          key: ${{ runner.os }}-build-${{ hashFiles('build.sbt', 'project/**') }}
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: sbt/setup-sbt@v1
+
+      - name: Import PGP key
+        run: echo "$PGP_SECRET" | gpg --batch --import
+        env:
+          PGP_SECRET: ${{ secrets.PGP_SECRET }}
+
+      - name: Verify version is derived from the tag
+        run: sbt -mem 3000 assertTagVersion
+
+      - name: Run tests
+        run: sbt -mem 3000 "+test"
+
+      - name: Publish to Maven Central
+        run: sbt -mem 3000 "+macros/publishSigned" sonaRelease
+        env:
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+          PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v3
+        with:
+          generate_release_notes: true
+          prerelease: ${{ contains(github.ref_name, '-') }} # 0.4.0-M1 → pre-release
+          files: target/out/jvm/*/cfor/cfor_*-${{ github.ref_name }}.jar
