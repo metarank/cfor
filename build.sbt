@@ -18,9 +18,9 @@ def isScala2(scalaVersion: String): Boolean =
   }
 
 lazy val sharedSettings = Seq(
-  crossScalaVersions := Seq("2.13.18", "3.9.0"),
+  crossScalaVersions := Seq("3.9.0", "3.9.0"),
   organization       := "io.github.metarank",
-  scalaVersion       := "2.13.18",
+  scalaVersion       := "3.9.0",
   scalacOptions ++= Seq("-feature", "-deprecation"),
   libraryDependencies ++= (if (isScala2(scalaVersion.value)) {
                              Seq("org.scala-lang" % "scala-reflect" % scalaVersion.value)
